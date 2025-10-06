@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Template Jadual Item</title>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial; padding: 20px; background:#f7f7f8; }
+    h1 { font-size:20px; margin-bottom:12px }
+    table { border-collapse: collapse; width:100%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background:#fafafa; font-weight:600 }
+    td[contenteditable] { min-width:100px }
+    .controls { margin:12px 0; display:flex; gap:8px; }
+    button { padding:8px 12px; border-radius:6px; border:1px solid #cfcfcf; background:#fff; cursor:pointer }
+    button.primary { background:#2563eb; color:#fff; border-color:transparent }
+    .small { font-size:13px; color:#555 }
+    .wrap { max-width:1100px; margin:auto }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Template Jadual Item</h1>
+    <div class="controls">
+      <button id="addRow">Tambah Baris</button>
+      <button id="exportCsv" class="primary">Eksport CSV</button>
+      <div class="small">Klik sel untuk sunting (editable)</div>
+    </div>
+
+    <table id="itemTable">
+      <thead>
+        <tr>
+          <th>Bil</th>
+          <th>Nama Item</th>
+          <th>Harga (RM)</th>
+          <th>Saiz Item / Parcel</th>
+          <th>Berat (kg)</th>
+          <th>Kuantiti</th>
+          <th>Status Gambar</th>
+          <th>Status Video</th>
+          <th>Catatan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 5 baris contoh seperti template pengguna -->
+        <tr>
+          <td>1</td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+          <td contenteditable></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const table = document.getElementById('itemTable').querySelector('tbody');
+    const addRowBtn = document.getElementById('addRow');
+    const exportBtn = document.getElementById('exportCsv');
+
+    function renumber() {
+      Array.from(table.rows).forEach((r, i) => r.cells[0].textContent = i+1);
+    }
+
+    addRowBtn.addEventListener('click', () => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td></td>
+        <td contenteditable></td>
+        <td contenteditable></td>
+        <td contenteditable></td>
+        <td contenteditable></td>
+        <td contenteditable></td>
+        <td contenteditable></td>
+        <td contenteditable></td>
+        <td contenteditable></td>
+      `;
+      table.appendChild(tr);
+      renumber();
+    });
+
+    exportBtn.addEventListener('click', () => {
+      const rows = Array.from(table.rows);
+      const headers = Array.from(document.querySelectorAll('#itemTable thead th')).map(h => h.textContent.trim());
+      const data = [headers];
+      rows.forEach(r => {
+        const cols = Array.from(r.cells).map(c => c.textContent.replace(/\n/g,' ').trim());
+        data.push(cols);
+      });
+      const csv = data.map(r => r.map(cell => '"'+cell.replace(/"/g,'""')+'"').join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'jadual_item.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // initial renumber
+    renumber();
+  </script>
+</body>
+</html>
